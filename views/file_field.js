@@ -33,7 +33,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
 
     @property {String}
     */
-  buttonTheme: 'capsule',
+  buttonThemeName: 'capsule',
 
   /**
     The title of the button after the input has a selection.  Setting this to null, will use the buttonTitle property instead.
@@ -106,7 +106,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
     @property {Boolean}
     */
   isProgressive: YES,
-
+  
   /**
     Submits the form and returns the unique X-Progress-ID that was submitted with the files.  If your backend is configured to track file uploads, such as with mod_upload_progress for lighttpd or NginxHttpUploadProgressModule, this X-Progress-ID can be used to periodically query the server for the progress of the upload.
 
@@ -165,11 +165,13 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
     var idx = this.get('numberOfFiles'),
     input;
     while (--idx >= 0) {
-      input = this._inputs[idx];
-      SC.Event.remove(input, 'mousedown', this, this._mouseDownInInput);
-      // // TODO: [publickeating] is it necessary to unregister for the following?
-      SC.Event.remove(input, 'mouseup', this, this._mouseUpInInput);
-      SC.Event.remove(input, 'mouseout', this, this._mouseOutOfInput);
+      if (this._inputs) {
+        input = this._inputs[idx];
+        SC.Event.remove(input, 'mousedown', this, this._mouseDownInInput);
+        // TODO: [publickeating] is it necessary to unregister for the following?
+        SC.Event.remove(input, 'mouseup', this, this._mouseUpInInput);
+        SC.Event.remove(input, 'mouseout', this, this._mouseOutOfInput);
+      }
     }
 
     this._inputs = null;
@@ -426,7 +428,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
       },
       classNames: 'sc-file-field-button-view'.w(),
       title: this.get('buttonTitle'),
-      theme: this.get('buttonTheme'),
+      themeName: this.get('buttonThemeName'),
       escapeHTML: this.get('escapeHTML'),
       isEnabledBinding: SC.Binding.oneWay('*parentView.isEnabled')
     });
