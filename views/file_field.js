@@ -22,6 +22,13 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
   classNames: 'sc-file-field-view'.w(),
 
   /**
+    The height of the buttons.
+    
+    @property {Number}
+    */
+  buttonHeight: 24,
+  
+  /**
     The title of the button.
 
     @property {String}
@@ -178,6 +185,17 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
     this.removeAllChildren();
   },
 
+  reset: function() {
+    var button = this._buttons[0],
+        label = this._labels[0];
+    
+    this._form.$()[0].reset();
+    
+    // TODO: remove or clear all additional buttons and inputs
+    button.set('title', this.get('buttonTitle'));
+    label.set('value', '');
+  },
+  
   _inputChange: function(evt) {
     var input = this._inputs[evt.context],
     button = this._buttons[evt.context],
@@ -405,12 +423,14 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
   },
 
   _createInput: function() {
-    var button, label, input, form = this._form,
+    var button, controlSize,
+    frame,
+    label, input, form = this._form,
     layout = this.get('layout'),
     inputs = this._inputs,
     buttons = this._buttons,
     labels = this._labels;
-
+    
     // Initialize arrays if necessary
     if (!inputs) inputs = this._inputs = [];
     if (!buttons) buttons = this._buttons = [];
@@ -423,12 +443,13 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
       // TODO: allow the button width to be specified or a percentage of total?
       layout: {
         top: currentNumberOfInputs * (24 + this.BOTTOM_PADDING),
-        height: 24,
+        height: this.get('buttonHeight'),
         width: 110
       },
       classNames: 'sc-file-field-button-view'.w(),
       title: this.get('buttonTitle'),
       themeName: this.get('buttonThemeName'),
+      controlSize: this.get('controlSize'),
       escapeHTML: this.get('escapeHTML'),
       isEnabledBinding: SC.Binding.oneWay('*parentView.isEnabled')
     });
@@ -438,7 +459,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
     label = SC.LabelView.create({
       layout: {
         top: currentNumberOfInputs * (24 + this.BOTTOM_PADDING),
-        height: 24,
+        height: this.get('buttonHeight'),
         left: 115
       },
       classNames: 'sc-file-field-label-view'.w(),
@@ -448,16 +469,23 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
     this.insertBefore(label, form);
     labels.push(label);
 
+    frame = this.getPath('parentView.frame');
+    
+    // Add the input.  Note that the input is positioned so that the button portion is the only clickable part (for IE)
     input = SC.View.create(SC.Control, {
+      useStaticLayout: YES,
       tagName: 'input',
       name: this.get('inputName'),
-      layout: {
-        left: 0,
-        // "auto"
-        right: -10,
-        top: currentNumberOfInputs * (24 + this.BOTTOM_PADDING),
-        height: 24
-      },
+      currentNumberOfInputs: currentNumberOfInputs,
+      // layout: {
+      //   // left: 0,
+      //   // "auto"
+      //   // width: frame.width * 4, // The CSS font-size should already make it big
+      //   right: -10,
+      //   top: currentNumberOfInputs * (24 + this.BOTTOM_PADDING),
+      //   height: this.get('buttonHeight')
+      // },
+      
       classNames: 'sc-file-field-input-view'.w(),
       isEnabledBinding: SC.Binding.oneWay('*parentView.parentView.isEnabled'),
 
@@ -466,8 +494,17 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
       },
 
       render: function(context, firstTime) {
-        if (firstTime) context.attr('type', 'file').attr('name', this.get('name')).attr('multiple', this.get('numberOfFiles') > 1).end();
-        //sc_super();
+        var currentNumberOfInputs = this.get('currentNumberOfInputs'),
+            height,
+            parentView = this.get('parentView');
+        
+        if (firstTime) {
+          context.attr('type', 'file').attr('name', this.get('name')).attr('multiple', this.get('numberOfFiles') > 1);
+          
+          height = parentView.get('buttonHeight');
+          top = currentNumberOfInputs * (24 + parentView.BOTTOM_PADDING);
+          context.addStyle({ 'top': top, 'height': height });
+        }
       },
 
       // This helper gets us isEnabled functionality from the SC.Control mixin

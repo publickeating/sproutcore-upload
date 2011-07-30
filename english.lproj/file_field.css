@@ -1,19 +1,20 @@
 /* Common SC.FileFieldView styles - needed to work properly */
 
+@import "compass/css3";
+
 .sc-view .sc-file-field-view {
-  z-index: 9000;
   direction: ltr;
+  z-index: 9000;
 }
 
 .sc-view .sc-file-field-form {
-/*  visibility: hidden;*/
 }
 
 .sc-view .sc-file-field-input-view {
-  opacity: 0;
-  -moz-opacity: 0;
-  filter: alpha(opacity=0);
+  @include opacity(0);
   font-size: 480px;
+  position: absolute;
+  right: -10px;
 }
 
 .sc-view .sc-file-field-iframe {
