@@ -496,6 +496,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
       render: function(context, firstTime) {
         var currentNumberOfInputs = this.get('currentNumberOfInputs'),
             height,
+            top,
             parentView = this.get('parentView');
         
         if (firstTime) {
