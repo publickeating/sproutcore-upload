@@ -42,3 +42,4 @@ SC.FileFieldHiddenInputView = SC.View.extend({
     }
   }
 });
+
