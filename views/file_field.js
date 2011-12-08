@@ -89,6 +89,17 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
   inputName: 'files[]',
 
   /**
+     The list of key-value pairs to be added as hidden values to submit along with the POST.
+     These will be rendered hidden in the form.
+
+     Example:
+       { key: "cookie", value: "abcdefghijklmnopqrstuvwxyz" }
+
+     @property {Array}
+   */
+  hiddenInputs: null,
+
+  /**
     Upload the file(s) automatically when set.  If numberOfFiles > 1, then the form won't be submitted until all inputs have values.
 
     @property {Boolean} YES, to autosubmit when all of the inputs have a value
@@ -469,6 +480,20 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
     this.insertBefore(label, form);
     labels.push(label);
 
+    // Add any hidden fields into the form
+    var hiddenInputs = this.get('hiddenInputs');
+    if (!SC.empty(hiddenInputs)) {
+      var hiddenField = null;
+      for (var i = 0, e = hiddenInputs.get('length'); i < e; i++) {
+        form.appendChild(
+          SC.FileFieldHiddenInputView.create({
+            name: hiddenInputs.objectAt(i).key,
+            value: hiddenInputs.objectAt(i).value
+          })
+        );
+      }
+    }
+
     frame = this.getPath('parentView.frame');
     
     // Add the input.  Note that the input is positioned so that the button portion is the only clickable part (for IE)
@@ -527,6 +552,20 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
 
     // TODO: why doesn't the observer get this all the time
     this.layoutDidChange();
+  },
+
+  updateHiddenFieldValue: function(name, value) {
+    // Complete a run loop so that the form's view layer is updated before the form is submitted
+    SC.RunLoop.begin();
+
+    var viewLayer = this._form.get('_view_layer');
+    for (var i = 0, e = viewLayer.length; i < e; i++) {
+      if (viewLayer[i].name === name) {
+        viewLayer[i].value = value;
+        break;
+      }
+    }
+    SC.RunLoop.end();
   },
 
   acceptsFirstResponder: function() {
