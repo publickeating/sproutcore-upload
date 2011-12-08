@@ -1,33 +1,34 @@
 // ==========================================================================
-// Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2009 Sprout Systems, Inc. and contributors.
-//            Portions ©2008-2009 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
+// Project:   SproutCore - Upload
+// Copyright: ©2011 7x7 Software Inc. and contributors.
+// License:   Licensed under MIT license
 // ==========================================================================
 
 /** @class
 
-  Implements a customized file input by creating a transparent file type input over top of a SC.ButtonView and using a hidden iframe to receive results (simulated AJAX).
+  Implements a customized file input by creating a transparent file type input over top of a
+  SC.ButtonView and using a hidden iframe to receive results (simulated AJAX).
 
-  There is only one caveat to using SC.FileFieldView unmodified, which is, on completion of the file load, the server must return a plain/text document containing stringified JSON.  SC.FileFieldView will parse the document (assuming it's plain/text) and pass the resulting JSON object to its delegate.
+  There is only one caveat to using SC.FileFieldView unmodified, which is, on completion of the
+  file load, the server must return a plain/text document containing stringified JSON.
+  SC.FileFieldView will parse the document (assuming it's plain/text) and pass the resulting
+  JSON object to its delegate.
 
   @extends SC.View
   @since SproutCore 1.0
 */
 
 // TODO: send warnings if the protocol isn't supported and try not to just hang
-SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
-/** @scope SC.FileFieldView.prototype */
-{
+SC.FileFieldView = SC.View.extend(SC.DelegateSupport, {
   classNames: 'sc-file-field-view'.w(),
 
   /**
     The height of the buttons.
-    
+
     @property {Number}
     */
   buttonHeight: 24,
-  
+
   /**
     The title of the button.
 
@@ -113,7 +114,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
     @property {Boolean}
     */
   isProgressive: YES,
-  
+
   /**
     Submits the form and returns the unique X-Progress-ID that was submitted with the files.  If your backend is configured to track file uploads, such as with mod_upload_progress for lighttpd or NginxHttpUploadProgressModule, this X-Progress-ID can be used to periodically query the server for the progress of the upload.
 
@@ -188,14 +189,14 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
   reset: function() {
     var button = this._buttons[0],
         label = this._labels[0];
-    
+
     this._form.$()[0].reset();
-    
+
     // TODO: remove or clear all additional buttons and inputs
     button.set('title', this.get('buttonTitle'));
     label.set('value', '');
   },
-  
+
   _inputChange: function(evt) {
     var input = this._inputs[evt.context],
     button = this._buttons[evt.context],
@@ -203,7 +204,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
     values = this._values;
 
     // Initialize the values array if necessary
-    if (!values) values = this._values = [];
+    if (!values) { values = this._values = []; }
 
     // Store the value
     var value = input.$().val(),
@@ -215,8 +216,8 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
     this.invokeDelegateMethod(del, 'fileFieldValueDidChange', this, value, previousValue);
 
     SC.RunLoop.begin();
-    if (this.get('displaysSelectedFilename')) label.set('value', value);
-    if (this.get('fileSelectedButtonTitle')) button.set('title', this.get('fileSelectedButtonTitle'));
+    if (this.get('displaysSelectedFilename')) { label.set('value', value); }
+    if (this.get('fileSelectedButtonTitle')) { button.set('title', this.get('fileSelectedButtonTitle')); }
     SC.RunLoop.end();
 
     // Determine how many values are actually set
@@ -232,7 +233,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
       // Check for actual set values (beware using length of array because setting the last value alone will make the length equal to numberOfFiles)
       if (count === this.get('numberOfFiles')) {
         // Autosubmit if we have a full (matching numberOfFiles) array of values and the delegate allows it
-        if (this.invokeDelegateMethod(del, 'fileFieldViewShouldSubmit', this)) this.submitForm();
+        if (this.invokeDelegateMethod(del, 'fileFieldViewShouldSubmit', this)) { this.submitForm(); }
       }
     }
   },
@@ -430,11 +431,11 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
     inputs = this._inputs,
     buttons = this._buttons,
     labels = this._labels;
-    
+
     // Initialize arrays if necessary
-    if (!inputs) inputs = this._inputs = [];
-    if (!buttons) buttons = this._buttons = [];
-    if (!labels) labels = this._labels = [];
+    if (!inputs) { inputs = this._inputs = []; }
+    if (!buttons) { buttons = this._buttons = []; }
+    if (!labels) { labels = this._labels = []; }
 
     // Used to determine top offset for each childView
     var currentNumberOfInputs = this._inputs.length;
@@ -470,7 +471,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
     labels.push(label);
 
     frame = this.getPath('parentView.frame');
-    
+
     // Add the input.  Note that the input is positioned so that the button portion is the only clickable part (for IE)
     input = SC.View.create(SC.Control, {
       useStaticLayout: YES,
@@ -485,7 +486,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
       //   top: currentNumberOfInputs * (24 + this.BOTTOM_PADDING),
       //   height: this.get('buttonHeight')
       // },
-      
+
       classNames: 'sc-file-field-input-view'.w(),
       isEnabledBinding: SC.Binding.oneWay('*parentView.parentView.isEnabled'),
 
@@ -498,10 +499,10 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
             height,
             top,
             parentView = this.get('parentView');
-        
+
         if (firstTime) {
           context.attr('type', 'file').attr('name', this.get('name')).attr('multiple', this.get('numberOfFiles') > 1);
-          
+
           height = parentView.get('buttonHeight');
           top = currentNumberOfInputs * (24 + parentView.BOTTOM_PADDING);
           context.addStyle({ 'top': top, 'height': height });
@@ -554,4 +555,5 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport,
   fileFieldViewDidSubmit: function(fileFieldView, uuid) {},
 
   fileFieldViewDidComplete: function(fileFieldView, result) {}
+
 });
