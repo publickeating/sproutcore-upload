@@ -30,6 +30,13 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport, {
   buttonHeight: 24,
 
   /**
+    The width of the buttons.
+
+    @property {Number}
+    */
+  buttonWidth: 110,
+
+  /**
     The title of the button.
 
     @property {String}
@@ -441,11 +448,10 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport, {
     var currentNumberOfInputs = this._inputs.length;
 
     button = SC.ButtonView.create({
-      // TODO: allow the button width to be specified or a percentage of total?
       layout: {
         top: currentNumberOfInputs * (24 + this.BOTTOM_PADDING),
         height: this.get('buttonHeight'),
-        width: 110
+        width: this.get('buttonWidth')
       },
       classNames: 'sc-file-field-button-view'.w(),
       title: this.get('buttonTitle'),
@@ -461,7 +467,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport, {
       layout: {
         top: currentNumberOfInputs * (24 + this.BOTTOM_PADDING),
         height: this.get('buttonHeight'),
-        left: 115
+        left: this.get('buttonWidth') + 5
       },
       classNames: 'sc-file-field-label-view'.w(),
       value: this.get('emptyText'),
