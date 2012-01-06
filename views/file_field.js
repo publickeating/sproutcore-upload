@@ -296,8 +296,13 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport, {
 
   _iframeLoad: function(evt) {
     var result = null;
-    if (this._iframe.$()[0].contentWindow) { // Iframe body content for IE
-      result = this._iframe.$()[0].contentWindow.document.body.firstChild.innerHTML;
+    if (this._iframe.$()[0].contentWindow) { // Iframe body content for IE & Chrome
+      if (this._iframe.$()[0].contentWindow.document.body.firstChild.innerHTML) {
+        result = this._iframe.$()[0].contentWindow.document.body.firstChild.innerHTML;
+      } else {
+        // Chrome doesn't seem to have anything in innerHTML, but data gives us what we want
+        result = this._iframe.$()[0].contentWindow.document.body.firstChild.data;
+      }
     } else if (this._iframe.$()[0].contentDocument) { // Iframe body content for other browsers
       result = this._iframe.$()[0].contentDocument.body.firstChild.innerHTML;
     } else {
