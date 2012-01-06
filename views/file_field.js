@@ -228,6 +228,13 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport, {
     var value = input.$().val(),
     previousValue = values[evt.context];
 
+    // Scrub "C:\fakepath" from value. Some browsers (notably IE and Chrome) use this to mask the
+    // actual path to the file for security reasons.  More here:
+    // http://acidmartin.wordpress.com/2009/06/09/the-mystery-of-cfakepath-unveiled/
+    if (SC.typeOf(value) === SC.T_STRING && value.indexOf("C:\\fakepath\\") === 0) {
+      value = value.slice("C:\\fakepath\\".length);
+    }
+
     values[evt.context] = value;
 
     var del = this.get('delegate') ? this.get('delegate') : this;
