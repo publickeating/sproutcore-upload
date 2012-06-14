@@ -391,7 +391,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport, {
 
       uuid: '',
 
-      action: this.get('formAction'),
+      actionBinding: SC.Binding.from("formAction", this).oneWay(),
 
       target: '',
 
