@@ -460,7 +460,8 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport, {
     layout = this.get('layout'),
     inputs = this._inputs,
     buttons = this._buttons,
-    labels = this._labels;
+    labels = this._labels,
+	buttonHeight = this.get('buttonHeight');
 
     // Initialize arrays if necessary
     if (!inputs) { inputs = this._inputs = []; }
@@ -472,7 +473,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport, {
 
     button = SC.ButtonView.create({
       layout: {
-        top: currentNumberOfInputs * (24 + this.BOTTOM_PADDING),
+        top: currentNumberOfInputs * (buttonHeight + this.BOTTOM_PADDING),
         height: this.get('buttonHeight'),
         width: this.get('buttonWidth')
       },
@@ -488,7 +489,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport, {
 
     label = SC.LabelView.create({
       layout: {
-        top: currentNumberOfInputs * (24 + this.BOTTOM_PADDING),
+        top: currentNumberOfInputs * (buttonHeight + this.BOTTOM_PADDING),
         height: this.get('buttonHeight'),
         left: this.get('buttonWidth') + 5
       },
@@ -547,7 +548,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport, {
           context.attr('type', 'file').attr('name', this.get('name')).attr('multiple', this.get('numberOfFiles') > 1);
 
           height = parentView.get('buttonHeight');
-          top = currentNumberOfInputs * (24 + parentView.BOTTOM_PADDING);
+          top = currentNumberOfInputs * (height + parentView.BOTTOM_PADDING);
           context.addStyle({ 'top': top, 'height': height });
         }
       },
@@ -567,7 +568,7 @@ SC.FileFieldView = SC.View.extend(SC.DelegateSupport, {
     SC.Event.add(input.$()[0], "change", this, this._inputChange, currentNumberOfInputs);
 
     //  Resize the parentview to fit
-    layout.height = ((currentNumberOfInputs + 1) * 24) + (currentNumberOfInputs * this.BOTTOM_PADDING);
+    layout.height = ((currentNumberOfInputs + 1) * buttonHeight) + (currentNumberOfInputs * this.BOTTOM_PADDING);
     this.set('layout', layout);
 
     // TODO: why doesn't the observer get this all the time
