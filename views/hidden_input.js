@@ -7,39 +7,39 @@
 
 /** @class
 
-   Implements additional hidden form fields for form submission along with a file upload
+    Implements additional hidden form fields for form submission along with a file upload
 
-   @extends SC.View
-   @since SproutCore 1.7.1b
+ @extends SC.View
+ @since SproutCore 1.7.1b
  */
 SC.FileFieldHiddenInputView = SC.View.extend({
-  /**
+    /**
      tag type to represent this view
 
      @property {String}
-   */
-  tagName: 'input',
-  /**
+     */
+    tagName: 'input',
+    /**
      The name of the hidden field
 
      @property {String}
-   */
-  name: '',
+     */
+    name: '',
 
-  /**
+    /**
      The value to place in the hidden field
 
      @property {String}
-   */
-  value: '',
+     */
+    value: '',
 
-  render: function(context, firstTime) {
-    if (firstTime) {
-      context.attr('type', 'hidden')
-        .attr('name', this.get('name'))
-        .attr('value', this.get('value'))
-        .end();
+    render: function (context, firstTime) {
+        if (firstTime) {
+            context.attr('type', 'hidden')
+                .attr('name', this.get('name'))
+                .attr('value', this.get('value'))
+                .end();
+        }
     }
-  }
 });
 
