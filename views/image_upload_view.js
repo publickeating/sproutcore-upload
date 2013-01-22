@@ -4,7 +4,10 @@
  - Author:    Joe Gaudet (joe@learndot.com) and contributors (see contributors.txt)               -
  - License:   Licensed under MIT license (see license.js)                                         -
  -------------------------------------------------------------------------------------------------*/
+
 sc_require('views/spinner_view');
+sc_require('views/upload_form');
+
 SC.ImageUploadView = SC.View.extend({
 
     childViews: ['spinnerView', 'uploadForm'],
