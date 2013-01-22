@@ -5,7 +5,7 @@
  - License:   Licensed under MIT license (see license.js)                                         -
  -------------------------------------------------------------------------------------------------*/
 sc_require('views/spinner_view');
-SC.ImageUploadView = SC.View.extend(SC.UploadableViewDelegate, {
+SC.ImageUploadView = SC.View.extend({
 
     childViews: ['spinnerView', 'uploadForm'],
 
