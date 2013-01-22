@@ -60,14 +60,14 @@ SC.ImageUploadView = SC.View.extend(SC.UploadableViewDelegate, {
     // Drop Support
 
     didCreateLayer: function () {
-        if (FormData) {
+        if (window.FormData) {
             SC.Event.add(this.$(), "dragover", this, this._dragover);
             SC.Event.add(this.$(), "drop", this, this._drop);
         }
     },
 
     willDestroyLayer: function () {
-        if (FomrData) {
+        if (window.FormData) {
             SC.Event.remove(this.$(), "drop", this, this._drop);
             SC.Event.remove(this.$(), "dragover", this, this._dragover);
         }
@@ -116,5 +116,4 @@ SC.ImageUploadView = SC.View.extend(SC.UploadableViewDelegate, {
         },
         isVisibleBinding: SC.Binding.oneWay('.parentView.isUploading')
     })
-})
-;
+});
