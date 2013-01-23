@@ -39,21 +39,22 @@ SC.SpinnerView = SC.View.extend({
             centerY: 0
         },
 
-        init: function () {
-            var timer = SC.Timer.schedule({
-                target: this,
-                action: 'animate',
-                interval: this.get('interval'),
-                repeats: YES
-            });
-            this.set('timer', timer);
-
-            sc_super();
-        },
-
         isVisibleDidChange: function () {
             var timer = this.get('timer');
-            timer.set('isPaused', !this.getPath('parentView.isVisible'));
+            if (this.getPath('parentView.isVisible')) {
+                timer = SC.Timer.schedule({
+                    target: this,
+                    action: 'animate',
+                    interval: this.get('interval'),
+                    repeats: YES
+                });
+                this.set('timer', timer);
+            }
+            else {
+                if (timer) {
+                    timer.invalidate();
+                }
+            }
         }.observes('.parentView.isVisible'),
 
         animate: function () {
