@@ -43,6 +43,9 @@ $theme.sc-view.sc-image-upload-view {
         }
     }
 
+    .sc-view.sc-spinner-view-container {
+        @include border-radius(120px, 120px);
+    }
 }
 
 

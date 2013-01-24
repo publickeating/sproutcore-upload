@@ -16,9 +16,11 @@ SC.ImageUploadView = SC.View.extend({
 
     classNameBindings: ['isActive:active', 'hasValue:has-value'],
 
-    displayProperties: ['value'],
+    displayProperties: ['imageUrl'],
 
     url: '',
+
+    imageUrl: '',
 
     isActiveBinding: SC.Binding.oneWay('*uploadForm.isActive'),
 
@@ -32,36 +34,89 @@ SC.ImageUploadView = SC.View.extend({
 
     isUploading: NO,
 
+    /**
+     * Adds our icon dom object
+     * @param context
+     */
     render: function (context) {
         context.begin().addClass('icon').end();
+        context.addStyle('background-image', "url('%@')".fmt(this.get('imageUrl')));
     },
 
+    /**
+     * Updateds the existing dom object with the url
+     */
     update: function () {
         this.invokeLast(function () {
-            var value = this.get('value');
-            if (value && value.indexOf('undefined') === -1) {
-                this.$().css({"background-image": "url('%@')".fmt(value)});
+            var imageUrl = this.get('imageUrl');
+            if (imageUrl) {
+                this.$().css({"background-image": "url('%@')".fmt(imageUrl)});
             }
         });
     },
 
-    urlFromResult: function (result) {
-        return result.filelink;
+    _setBackground: function () {
+
     },
 
+    /**
+     * Extract the image url from the result
+     * @param {SC.Object} result
+     * @return {String}
+     */
+    imageUrlFromResult: function (result) {
+        return result.get('url');
+    },
+
+    /**
+     * Extract the value from the result
+     * @param {SC.Object} result
+     * @return {String}
+     */
+    valueFromResult: function (result) {
+        return result.get('url');
+    },
+
+    /**
+     * Extract the result from the value, this is for a case where you are
+     * editing an existing value - in our case we will return the value, but in
+     * some cases we might  want to fetch a record from the store
+     * @param {String} value
+     * @return {SC.Object}
+     */
+    resultFromValue: function (value) {
+        return this.get('result');
+    },
+
+    valueDidChange: function () {
+        this.set('result', this.resultFromValue(this.get('value')));
+    }.observes('value'),
+
+    /**
+     * Observes the result and it's status (if it's a record) and updates
+     * the url accordingly
+     */
     resultDidChange: function () {
-        var result = this.get('result');
+        var result = this.get('result'), imageUrl;
         if (result) {
-            SC.imageQueue.loadImage(this.urlFromResult(result), this, function (imageUrl) {
-                this.set('isUploading', NO);
-                this.set('value', imageUrl);
-            });
+            imageUrl = this.imageUrlFromResult(result);
+            if (imageUrl) {
+                SC.imageQueue.loadImage(imageUrl, this, function (imageUrl) {
+                    this.set('isUploading', NO);
+                    this.set('imageUrl', imageUrl);
+                    this.setIfChanged('value', this.valueFromResult(result));
+                });
+            }
         }
-    }.observes('result'),
+    }.observes('*result.status'),
 
     // **************************************************
     // Drop Support
 
+    /**
+     * If the browser supports FormData posting we will allow this object to
+     * handle drag and drop uploading so we need to setup some events
+     */
     didCreateLayer: function () {
         if (window.FormData) {
             SC.Event.add(this.$(), "dragover", this, this._dragover);
@@ -69,6 +124,9 @@ SC.ImageUploadView = SC.View.extend({
         }
     },
 
+    /**
+     * Tear down any drag and drop events we may have setup
+     */
     willDestroyLayer: function () {
         if (window.FormData) {
             SC.Event.remove(this.$(), "drop", this, this._drop);
@@ -76,9 +134,14 @@ SC.ImageUploadView = SC.View.extend({
         }
     },
 
-    _drop: function (e) {
-        e.preventDefault();
-        this._uploadFile(e.dataTransfer.files[0]);
+    /**
+     * Drop event handler
+     * @param {SC.Event} event
+     * @private
+     */
+    _drop: function (event) {
+        event.preventDefault();
+        this._uploadFile(event.dataTransfer.files[0]);
     },
 
     _dragover: function (e) {
@@ -95,11 +158,11 @@ SC.ImageUploadView = SC.View.extend({
     },
 
     _didUploadFile: function (response) {
-        this.set('result', JSON.parse(response.get('body')));
+        this.set('result', SC.Object.create(JSON.parse(response.get('body'))));
     },
 
-    // **************************************************
-    // views
+// **************************************************
+// views
 
     uploadForm: SC.UploadForm.extend({
         uploadForm: SC.outlet('parentView.url'),
@@ -119,4 +182,5 @@ SC.ImageUploadView = SC.View.extend({
         },
         isVisibleBinding: SC.Binding.oneWay('.parentView.isUploading')
     })
-});
+})
+;
