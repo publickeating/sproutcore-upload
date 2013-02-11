@@ -26,24 +26,40 @@ SC.FileChooserView = SC.View.extend({
 
     submitOnChange: YES,
 
+    buttonTitle: 'Choose a File',
+
+    showLabel: YES,
+
     submit: function () {
         this.get('form').submit();
     },
 
+    init: function () {
+        this.layout = {
+            height: SC.Theme.find(SC.defaultTheme).buttonRenderDelegate[SC.REGULAR_CONTROL_SIZE].height,
+        };
+        sc_super();
+    },
+
     buttonView: SC.ButtonView.extend({
 
-        layout: {
-            height: SC.Theme.find(SC.defaultTheme).buttonRenderDelegate[SC.REGULAR_CONTROL_SIZE].height,
-            width: 100,
-            centerY: 0
+
+        init: function () {
+            this.layout = {
+                top: 0,
+                bottom: 0,
+                width: 100
+            };
+            sc_super();
         },
 
-        title: 'Choose a File',
+        title: SC.outlet('parentView.buttonTitle'),
         isActiveBinding: SC.Binding.oneWay('.parentView.form.isActive'),
         isEnabledBinding: SC.Binding.oneWay('.parentView.form.isUploading').not()
     }),
 
     labelView: SC.LabelView.extend({
+        isVisibleBinding: SC.Binding.oneWay('.parentView.showLabel'),
         valueBinding: SC.Binding.oneWay('.parentView.form.input.value'),
         layout: {
             right: 0,
