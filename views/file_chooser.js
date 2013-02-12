@@ -35,41 +35,41 @@ SC.FileChooserView = SC.View.extend({
     },
 
     init: function () {
-        this.layout = {
-            height: SC.Theme.find(SC.defaultTheme).buttonRenderDelegate[SC.REGULAR_CONTROL_SIZE].height,
-        };
         sc_super();
+        this.adjust('height', SC.Theme.find(SC.defaultTheme).buttonRenderDelegate[this.get('controlSize')].height);
+    },
+
+    buttonLayout: {
+        top: 0,
+        bottom: 0,
+        width: 140
+    },
+
+    labelLayout: {
+        top: 0,
+        bottom: 0,
+        right: 0,
+        left: 140
     },
 
     buttonView: SC.ButtonView.extend({
-
-
-        init: function () {
-            this.layout = {
-                top: 0,
-                bottom: 0,
-                width: 100
-            };
-            sc_super();
-        },
-
+        layout: SC.outlet('parentView.buttonLayout'),
+        controlSize: SC.outlet('parentView.controlSize'),
+        icon: 'cloud-upload',
         title: SC.outlet('parentView.buttonTitle'),
         isActiveBinding: SC.Binding.oneWay('.parentView.form.isActive'),
         isEnabledBinding: SC.Binding.oneWay('.parentView.form.isUploading').not()
     }),
 
     labelView: SC.LabelView.extend({
+        layout: SC.outlet('parentView.labelLayout'),
+        controlSize: SC.outlet('parentView.controlSize'),
         isVisibleBinding: SC.Binding.oneWay('.parentView.showLabel'),
-        valueBinding: SC.Binding.oneWay('.parentView.form.input.value'),
-        layout: {
-            right: 0,
-            left: 110,
-            height: 20,
-            centerY: 0
-        }
+        valueBinding: SC.Binding.oneWay('.parentView.form.input.value')
     }),
 
     form: SC.UploadForm.extend({
         submitOnChange: SC.outlet('parentView.submitOnChange')
     })
-});
+})
+;
