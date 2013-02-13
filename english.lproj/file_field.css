@@ -3,24 +3,23 @@
 @import "compass/css3";
 
 .sc-view .sc-file-field-view {
-  direction: ltr;
-  z-index: 9000;
+    direction: ltr;
+    z-index: 9000;
 }
 
 .sc-view .sc-file-field-form {
 }
 
 .sc-view .sc-file-field-input-view {
-  @include opacity(0);
-  font-size: 480px;
-  position: absolute;
-  right: -10px;
+    @include opacity(0);
+    font-size: 480px;
+    position: absolute;
 }
 
 .sc-view .sc-file-field-iframe {
-  border-style: none;
+    border-style: none;
 }
 
 .sc-view .sc-file-field-label-view {
-  line-height: 24px;
+    line-height: 24px;
 }
